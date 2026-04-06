@@ -55,30 +55,30 @@ asyncio.run(main())
 
 ## What Gets Instrumented
 
-| Method | Span Kind | Span Name | Description |
-|--------|-----------|-----------|-------------|
-| `Client.publish()` | `PRODUCER` | `{subject} send` | Fire-and-forget publish |
-| `Client.subscribe()` | `CONSUMER` | `{subject} receive` | Per-message spans for both callback and `next_msg()` patterns |
-| `Client.request()` | `CLIENT` | `{subject} request` | Request-reply (waits for response) |
-| `JetStreamContext.publish()` | `PRODUCER` | `{subject} send` | JetStream publish with stream attributes |
+| Method                       | Span Kind  | Span Name           | Description                                                   |
+| ---------------------------- | ---------- | ------------------- | ------------------------------------------------------------- |
+| `Client.publish()`           | `PRODUCER` | `{subject} send`    | Fire-and-forget publish                                       |
+| `Client.subscribe()`         | `CONSUMER` | `{subject} receive` | Per-message spans for both callback and `next_msg()` patterns |
+| `Client.request()`           | `CLIENT`   | `{subject} request` | Request-reply (waits for response)                            |
+| `JetStreamContext.publish()` | `PRODUCER` | `{subject} send`    | JetStream publish with stream attributes                      |
 
 ### Span Attributes
 
 All spans include standard [OpenTelemetry messaging semantic conventions](https://opentelemetry.io/docs/specs/semconv/messaging/):
 
-| Attribute | Value |
-|-----------|-------|
-| `messaging.system` | `nats` |
-| `messaging.destination.name` | NATS subject (e.g. `orders.new`) |
-| `messaging.operation` | `publish`, `receive`, or `request` |
-| `server.address` | NATS server hostname |
-| `server.port` | NATS server port |
+| Attribute                    | Value                              |
+| ---------------------------- | ---------------------------------- |
+| `messaging.system`           | `nats`                             |
+| `messaging.destination.name` | NATS subject (e.g. `orders.new`)   |
+| `messaging.operation`        | `publish`, `receive`, or `request` |
+| `server.address`             | NATS server hostname               |
+| `server.port`                | NATS server port                   |
 
 JetStream publish spans additionally include:
 
-| Attribute | Value |
-|-----------|-------|
-| `messaging.destination.kind` | `stream` |
+| Attribute                      | Value                        |
+| ------------------------------ | ---------------------------- |
+| `messaging.destination.kind`   | `stream`                     |
 | `messaging.destination.stream` | Stream name (when specified) |
 
 ## Trace Context Propagation
@@ -234,16 +234,3 @@ src/otel_instrumentation_nats/
 ├── version.py                # Package version
 └── package.py                # Instrumented library version constraints
 ```
-
-## Compatibility
-
-| Dependency | Version |
-|------------|---------|
-| `nats-py` | `>= 2.0.0, < 3.0.0` |
-| `opentelemetry-api` | `~= 1.5` |
-| `opentelemetry-instrumentation` | `>= 0.50b0` |
-| Python | `>= 3.13` |
-
-## License
-
-See [LICENSE](LICENSE) for details.
