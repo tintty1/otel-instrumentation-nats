@@ -3,13 +3,11 @@
 from __future__ import annotations
 
 from contextvars import ContextVar
-from typing import Any, Optional
+from typing import Any
 
-from opentelemetry import context, trace
-from opentelemetry.instrumentation.utils import is_instrumentation_enabled
-from opentelemetry.semconv.trace import SpanAttributes
+from opentelemetry import trace
 from opentelemetry.semconv.attributes import server_attributes
-from opentelemetry.trace import SpanKind, StatusCode
+from opentelemetry.semconv.trace import SpanAttributes
 
 _MESSAGING_SYSTEM = "nats"
 
@@ -39,7 +37,8 @@ class suppress_nats_instrumentation:
 
 
 def get_span_name(subject: str, operation: str) -> str:
-    """Build a span name following OTel messaging conventions: '{destination} {operation}'."""
+    """Build a span name following OTel messaging conventions:
+    '{destination} {operation}'."""
     return f"{subject} {operation}"
 
 
@@ -47,8 +46,8 @@ def set_common_span_attributes(
     span: trace.Span,
     subject: str,
     operation: str,
-    server_address: Optional[str] = None,
-    server_port: Optional[int] = None,
+    server_address: str | None = None,
+    server_port: int | None = None,
 ) -> None:
     """Set standard messaging semantic convention attributes on a span."""
     if not span.is_recording():
@@ -64,7 +63,7 @@ def set_common_span_attributes(
         span.set_attribute(server_attributes.SERVER_PORT, server_port)
 
 
-def extract_server_info(client: Any) -> tuple[Optional[str], Optional[int]]:
+def extract_server_info(client: Any) -> tuple[str | None, int | None]:
     """Extract server address and port from a NATS client instance.
 
     The nats-py Client stores the connected server URL in

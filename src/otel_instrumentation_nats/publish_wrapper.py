@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
-from opentelemetry import context, trace
+from opentelemetry import trace
 from opentelemetry.instrumentation.utils import is_instrumentation_enabled
 from opentelemetry.trace import SpanKind
 
@@ -35,10 +36,13 @@ def wrap_publish(tracer: trace.Tracer) -> Callable:
         args: tuple,
         kwargs: dict,
     ) -> None:
-        if not is_instrumentation_enabled() or is_nats_instrumentation_suppressed():
+        if (
+            not is_instrumentation_enabled()
+            or is_nats_instrumentation_suppressed()
+        ):
             return await wrapped(*args, **kwargs)
 
-        # Extract arguments: publish(subject, payload=b"", reply="", headers=None)
+        # publish(subject, payload=b"", reply="", headers=None)
         subject = args[0] if args else kwargs.get("subject", "unknown")
 
         span_name = get_span_name(subject, "send")

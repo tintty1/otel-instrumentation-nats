@@ -35,7 +35,8 @@ class TestPublishInstrumentation:
         assert span.kind == SpanKind.PRODUCER
         assert span.attributes[SpanAttributes.MESSAGING_SYSTEM] == "nats"
         assert (
-            span.attributes[SpanAttributes.MESSAGING_DESTINATION_NAME] == "test.publish"
+            span.attributes[SpanAttributes.MESSAGING_DESTINATION_NAME]
+            == "test.publish"
         )
         assert span.attributes[SpanAttributes.MESSAGING_OPERATION] == "publish"
 

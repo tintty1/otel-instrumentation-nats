@@ -5,8 +5,6 @@ These tests require a running NATS server (via docker-compose).
 
 from __future__ import annotations
 
-import asyncio
-
 import nats
 import pytest
 from opentelemetry.semconv.trace import SpanAttributes
@@ -39,7 +37,10 @@ class TestRequestReplyInstrumentation:
         span = client_spans[0]
         assert span.name == "test.req request"
         assert span.attributes[SpanAttributes.MESSAGING_SYSTEM] == "nats"
-        assert span.attributes[SpanAttributes.MESSAGING_DESTINATION_NAME] == "test.req"
+        assert (
+            span.attributes[SpanAttributes.MESSAGING_DESTINATION_NAME]
+            == "test.req"
+        )
         assert span.attributes[SpanAttributes.MESSAGING_OPERATION] == "request"
 
     async def test_request_injects_trace_context(self, spans):
@@ -77,12 +78,15 @@ class TestRequestReplyInstrumentation:
         finished_spans = spans()
         client_spans = [s for s in finished_spans if s.kind == SpanKind.CLIENT]
         # The handler's subscribe callback also creates consumer spans
-        consumer_spans = [s for s in finished_spans if s.kind == SpanKind.CONSUMER]
+        consumer_spans = [
+            s for s in finished_spans if s.kind == SpanKind.CONSUMER
+        ]
 
         assert len(client_spans) == 1
 
         # The consumer span should share the same trace as the client span
         if consumer_spans:
             assert (
-                client_spans[0].context.trace_id == consumer_spans[0].context.trace_id
+                client_spans[0].context.trace_id
+                == consumer_spans[0].context.trace_id
             )

@@ -3,12 +3,8 @@
 from __future__ import annotations
 
 from opentelemetry import context, trace
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.trace.propagation import get_current_span
 
 from otel_instrumentation_nats.context_propagation import (
-    NatsHeadersGetter,
-    NatsHeadersSetter,
     extract_trace_context,
     inject_trace_context,
     nats_getter,
@@ -90,6 +86,8 @@ class TestExtractTraceContext:
         token = context.attach(extracted_ctx)
         try:
             extracted_span = trace.get_current_span()
-            assert extracted_span.get_span_context().trace_id == expected_trace_id
+            assert (
+                extracted_span.get_span_context().trace_id == expected_trace_id
+            )
         finally:
             context.detach(token)

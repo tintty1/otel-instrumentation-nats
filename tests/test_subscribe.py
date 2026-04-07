@@ -36,8 +36,12 @@ class TestSubscribeCallbackInstrumentation:
 
         finished_spans = spans()
         # Should have at least a PRODUCER span (publish) and a CONSUMER span (callback)
-        producer_spans = [s for s in finished_spans if s.kind == SpanKind.PRODUCER]
-        consumer_spans = [s for s in finished_spans if s.kind == SpanKind.CONSUMER]
+        producer_spans = [
+            s for s in finished_spans if s.kind == SpanKind.PRODUCER
+        ]
+        consumer_spans = [
+            s for s in finished_spans if s.kind == SpanKind.CONSUMER
+        ]
 
         assert len(producer_spans) >= 1
         assert len(consumer_spans) == 1
@@ -49,9 +53,13 @@ class TestSubscribeCallbackInstrumentation:
             consumer.attributes[SpanAttributes.MESSAGING_DESTINATION_NAME]
             == "test.sub.cb"
         )
-        assert consumer.attributes[SpanAttributes.MESSAGING_OPERATION] == "receive"
+        assert (
+            consumer.attributes[SpanAttributes.MESSAGING_OPERATION] == "receive"
+        )
 
-    async def test_subscribe_callback_links_producer_consumer_traces(self, spans):
+    async def test_subscribe_callback_links_producer_consumer_traces(
+        self, spans
+    ):
         """Consumer span should be a child of the producer span via propagation."""
         nc = await nats.connect(NATS_URL)
         received = asyncio.Event()
@@ -68,8 +76,12 @@ class TestSubscribeCallbackInstrumentation:
             await nc.close()
 
         finished_spans = spans()
-        producer_spans = [s for s in finished_spans if s.kind == SpanKind.PRODUCER]
-        consumer_spans = [s for s in finished_spans if s.kind == SpanKind.CONSUMER]
+        producer_spans = [
+            s for s in finished_spans if s.kind == SpanKind.PRODUCER
+        ]
+        consumer_spans = [
+            s for s in finished_spans if s.kind == SpanKind.CONSUMER
+        ]
 
         assert len(producer_spans) >= 1
         assert len(consumer_spans) == 1
@@ -108,7 +120,9 @@ class TestSubscribeCallbackInstrumentation:
             await nc.close()
 
         finished_spans = spans()
-        consumer_spans = [s for s in finished_spans if s.kind == SpanKind.CONSUMER]
+        consumer_spans = [
+            s for s in finished_spans if s.kind == SpanKind.CONSUMER
+        ]
         assert len(consumer_spans) == 3
 
 
@@ -126,7 +140,9 @@ class TestSubscribeNextMsgInstrumentation:
             await nc.close()
 
         finished_spans = spans()
-        consumer_spans = [s for s in finished_spans if s.kind == SpanKind.CONSUMER]
+        consumer_spans = [
+            s for s in finished_spans if s.kind == SpanKind.CONSUMER
+        ]
 
         assert len(consumer_spans) == 1
         consumer = consumer_spans[0]
@@ -145,8 +161,12 @@ class TestSubscribeNextMsgInstrumentation:
             await nc.close()
 
         finished_spans = spans()
-        producer_spans = [s for s in finished_spans if s.kind == SpanKind.PRODUCER]
-        consumer_spans = [s for s in finished_spans if s.kind == SpanKind.CONSUMER]
+        producer_spans = [
+            s for s in finished_spans if s.kind == SpanKind.PRODUCER
+        ]
+        consumer_spans = [
+            s for s in finished_spans if s.kind == SpanKind.CONSUMER
+        ]
 
         assert len(producer_spans) >= 1
         assert len(consumer_spans) == 1

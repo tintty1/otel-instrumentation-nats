@@ -35,7 +35,9 @@ class TestJetStreamPublishInstrumentation:
             await nc.close()
 
         finished_spans = spans()
-        producer_spans = [s for s in finished_spans if s.kind == SpanKind.PRODUCER]
+        producer_spans = [
+            s for s in finished_spans if s.kind == SpanKind.PRODUCER
+        ]
 
         assert len(producer_spans) >= 1
         # Find the JetStream publish span (not admin API spans)
@@ -51,8 +53,12 @@ class TestJetStreamPublishInstrumentation:
         js = nc.jetstream()
 
         try:
-            await js.add_stream(name="TEST_STREAM", subjects=["js.test.stream.>"])
-            await js.publish("js.test.stream.attr", b"hello", stream="TEST_STREAM")
+            await js.add_stream(
+                name="TEST_STREAM", subjects=["js.test.stream.>"]
+            )
+            await js.publish(
+                "js.test.stream.attr", b"hello", stream="TEST_STREAM"
+            )
         finally:
             try:
                 await js.delete_stream("TEST_STREAM")
@@ -61,12 +67,16 @@ class TestJetStreamPublishInstrumentation:
             await nc.close()
 
         finished_spans = spans()
-        producer_spans = [s for s in finished_spans if s.kind == SpanKind.PRODUCER]
+        producer_spans = [
+            s for s in finished_spans if s.kind == SpanKind.PRODUCER
+        ]
 
         js_span = [s for s in producer_spans if "js.test.stream.attr" in s.name]
         assert len(js_span) == 1
         span = js_span[0]
-        assert span.attributes.get("messaging.destination.stream") == "TEST_STREAM"
+        assert (
+            span.attributes.get("messaging.destination.stream") == "TEST_STREAM"
+        )
 
 
 class TestJetStreamSubscribeInstrumentation:
@@ -93,9 +103,13 @@ class TestJetStreamSubscribeInstrumentation:
             await nc.close()
 
         finished_spans = spans()
-        consumer_spans = [s for s in finished_spans if s.kind == SpanKind.CONSUMER]
+        consumer_spans = [
+            s for s in finished_spans if s.kind == SpanKind.CONSUMER
+        ]
         # Find the actual message consumer span (not _INBOX responses)
-        js_consumers = [s for s in consumer_spans if "js.test.sub.span" in s.name]
+        js_consumers = [
+            s for s in consumer_spans if "js.test.sub.span" in s.name
+        ]
 
         assert len(js_consumers) >= 1
 
@@ -106,7 +120,9 @@ class TestJetStreamSubscribeInstrumentation:
 
         try:
             await js.add_stream(name="TEST_PULL", subjects=["js.test.pull.>"])
-            psub = await js.pull_subscribe("js.test.pull.span", durable="test-durable")
+            psub = await js.pull_subscribe(
+                "js.test.pull.span", durable="test-durable"
+            )
 
             # Publish a message
             await js.publish("js.test.pull.span", b"hello")
@@ -124,7 +140,9 @@ class TestJetStreamSubscribeInstrumentation:
             await nc.close()
 
         finished_spans = spans()
-        producer_spans = [s for s in finished_spans if s.kind == SpanKind.PRODUCER]
+        producer_spans = [
+            s for s in finished_spans if s.kind == SpanKind.PRODUCER
+        ]
         # JetStream publish should create a producer span
         assert len(producer_spans) >= 1
 
@@ -151,15 +169,27 @@ class TestJetStreamSubscribeInstrumentation:
             await nc.close()
 
         finished_spans = spans()
-        producer_spans = [s for s in finished_spans if s.kind == SpanKind.PRODUCER]
-        consumer_spans = [s for s in finished_spans if s.kind == SpanKind.CONSUMER]
+        producer_spans = [
+            s for s in finished_spans if s.kind == SpanKind.PRODUCER
+        ]
+        consumer_spans = [
+            s for s in finished_spans if s.kind == SpanKind.CONSUMER
+        ]
 
         # Find the JS publish producer span and the matching consumer span
-        js_producers = [s for s in producer_spans if "js.test.prop.span" in s.name]
-        js_consumers = [s for s in consumer_spans if "js.test.prop.span" in s.name]
+        js_producers = [
+            s for s in producer_spans if "js.test.prop.span" in s.name
+        ]
+        js_consumers = [
+            s for s in consumer_spans if "js.test.prop.span" in s.name
+        ]
 
-        assert len(js_producers) >= 1, "Should have at least one JS producer span"
-        assert len(js_consumers) >= 1, "Should have at least one JS consumer span"
+        assert len(js_producers) >= 1, (
+            "Should have at least one JS producer span"
+        )
+        assert len(js_consumers) >= 1, (
+            "Should have at least one JS consumer span"
+        )
 
         producer = js_producers[0]
         consumer = js_consumers[0]

@@ -1,9 +1,11 @@
-"""Wrapper for NATS Client.subscribe() to create CONSUMER spans on message delivery."""
+"""Wrapper for NATS Client.subscribe() to create CONSUMER spans
+on message delivery."""
 
 from __future__ import annotations
 
 import functools
-from typing import Any, Awaitable, Callable, Optional
+from collections.abc import Callable
+from typing import Any
 
 from opentelemetry import context, trace
 from opentelemetry.instrumentation.utils import is_instrumentation_enabled
@@ -22,8 +24,8 @@ _OPERATION = "receive"
 def _wrap_callback(
     tracer: trace.Tracer,
     callback: Callable,
-    server_address: Optional[str] = None,
-    server_port: Optional[int] = None,
+    server_address: str | None = None,
+    server_port: int | None = None,
 ) -> Callable:
     """Wrap a subscription callback to create a CONSUMER span for each message.
 
@@ -92,13 +94,17 @@ def wrap_subscribe(tracer: trace.Tracer) -> Callable:
         # Intercept the cb kwarg and wrap it
         cb = kwargs.get("cb")
         if cb is not None:
-            kwargs["cb"] = _wrap_callback(tracer, cb, server_address, server_port)
+            kwargs["cb"] = _wrap_callback(
+                tracer, cb, server_address, server_port
+            )
         else:
             # Check positional args: subscribe(subject, queue="", cb=None, ...)
             # cb is the 3rd positional argument (index 2)
             if len(args) > 2 and args[2] is not None:
                 cb = args[2]
-                wrapped_cb = _wrap_callback(tracer, cb, server_address, server_port)
+                wrapped_cb = _wrap_callback(
+                    tracer, cb, server_address, server_port
+                )
                 args = (*args[:2], wrapped_cb, *args[3:])
 
         sub = await wrapped(*args, **kwargs)
@@ -106,7 +112,9 @@ def wrap_subscribe(tracer: trace.Tracer) -> Callable:
         # If no callback was provided, wrap the subscription's next_msg
         # to trace the async iterator / next_msg() pull pattern
         if cb is None:
-            _wrap_subscription_next_msg(sub, tracer, server_address, server_port)
+            _wrap_subscription_next_msg(
+                sub, tracer, server_address, server_port
+            )
 
         return sub
 
@@ -116,8 +124,8 @@ def wrap_subscribe(tracer: trace.Tracer) -> Callable:
 def _wrap_subscription_next_msg(
     sub: Any,
     tracer: trace.Tracer,
-    server_address: Optional[str] = None,
-    server_port: Optional[int] = None,
+    server_address: str | None = None,
+    server_port: int | None = None,
 ) -> None:
     """Wrap a Subscription's next_msg method to create CONSUMER spans.
 
@@ -126,7 +134,7 @@ def _wrap_subscription_next_msg(
     """
     original_next_msg = sub.next_msg
 
-    async def _traced_next_msg(timeout: Optional[float] = 1.0) -> Any:
+    async def _traced_next_msg(timeout: float | None = 1.0) -> Any:
         msg = await original_next_msg(timeout=timeout)
 
         if msg is None:

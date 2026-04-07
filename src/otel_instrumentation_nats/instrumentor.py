@@ -7,7 +7,8 @@ OpenTelemetry spans for publish, subscribe, request, and JetStream operations.
 from __future__ import annotations
 
 import logging
-from typing import Any, Collection
+from collections.abc import Collection
+from typing import Any
 
 import wrapt
 from opentelemetry import trace

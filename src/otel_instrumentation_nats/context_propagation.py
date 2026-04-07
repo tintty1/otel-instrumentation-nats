@@ -6,8 +6,6 @@ with the OpenTelemetry TextMap propagation API.
 
 from __future__ import annotations
 
-from typing import Iterable, Optional
-
 from opentelemetry.context.context import Context
 from opentelemetry.propagators import textmap
 
@@ -22,7 +20,7 @@ class NatsHeadersSetter(textmap.Setter[dict[str, str]]):
 class NatsHeadersGetter(textmap.Getter[dict[str, str]]):
     """Extracts trace context from NATS message headers (Dict[str, str])."""
 
-    def get(self, carrier: dict[str, str], key: str) -> Optional[list[str]]:
+    def get(self, carrier: dict[str, str], key: str) -> list[str] | None:
         value = carrier.get(key)
         if value is None:
             return None

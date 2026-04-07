@@ -10,7 +10,8 @@ the JetStream subscribe to add JetStream-specific span attributes.
 
 from __future__ import annotations
 
-from typing import Any, Callable, Optional
+from collections.abc import Callable
+from typing import Any
 
 from opentelemetry import trace
 from opentelemetry.instrumentation.utils import is_instrumentation_enabled
@@ -48,7 +49,9 @@ def wrap_jetstream_publish(tracer: trace.Tracer) -> Callable:
         if not is_instrumentation_enabled():
             return await wrapped(*args, **kwargs)
 
-        # JetStreamContext.publish(subject, payload=b"", timeout=None, stream=None, headers=None)
+        # JetStreamContext.publish(
+        #     subject, payload=b"", timeout=None, stream=None, headers=None
+        # )
         subject = args[0] if args else kwargs.get("subject", "unknown")
         stream = kwargs.get("stream")
 
@@ -56,7 +59,9 @@ def wrap_jetstream_publish(tracer: trace.Tracer) -> Callable:
 
         # Get server info from the underlying NATS client
         nc = getattr(instance, "_nc", None)
-        server_address, server_port = extract_server_info(nc) if nc else (None, None)
+        server_address, server_port = (
+            extract_server_info(nc) if nc else (None, None)
+        )
 
         with tracer.start_as_current_span(
             span_name,

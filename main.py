@@ -5,7 +5,10 @@ import asyncio
 import nats
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import ConsoleSpanExporter, SimpleSpanProcessor
+from opentelemetry.sdk.trace.export import (
+    ConsoleSpanExporter,
+    SimpleSpanProcessor,
+)
 
 from otel_instrumentation_nats import NatsInstrumentor
 

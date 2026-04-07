@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 from opentelemetry import trace
 from opentelemetry.instrumentation.utils import is_instrumentation_enabled
@@ -38,7 +39,10 @@ def wrap_request(tracer: trace.Tracer) -> Callable:
         args: tuple,
         kwargs: dict,
     ) -> Any:
-        if not is_instrumentation_enabled() or is_nats_instrumentation_suppressed():
+        if (
+            not is_instrumentation_enabled()
+            or is_nats_instrumentation_suppressed()
+        ):
             return await wrapped(*args, **kwargs)
 
         # Extract arguments: request(subject, payload=b"", timeout=0.5, ...)
