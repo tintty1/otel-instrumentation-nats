@@ -177,36 +177,34 @@ dependencies = [
 instruments = [
     { name = "nats-py" },
 ]
-test = [
-    { name = "nats-py" },
-    { name = "opentelemetry-sdk" },
-    { name = "pytest" },
-    { name = "pytest-asyncio" },
-]
 
 [package.dev-dependencies]
 dev = [
+    { name = "nats-py" },
+    { name = "opentelemetry-sdk" },
     { name = "pre-commit" },
+    { name = "pytest" },
+    { name = "pytest-asyncio" },
     { name = "ruff" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "nats-py", marker = "extra == 'instruments'", specifier = ">=2.0.0,<3.0.0" },
-    { name = "nats-py", marker = "extra == 'test'", specifier = ">=2.0.0,<3.0.0" },
     { name = "opentelemetry-api", specifier = "~=1.27" },
     { name = "opentelemetry-instrumentation", specifier = "==0.61b0" },
-    { name = "opentelemetry-sdk", marker = "extra == 'test'", specifier = "~=1.27" },
     { name = "opentelemetry-semantic-conventions", specifier = "==0.61b0" },
-    { name = "pytest", marker = "extra == 'test'", specifier = ">=7.0" },
-    { name = "pytest-asyncio", marker = "extra == 'test'", specifier = ">=0.21.0" },
     { name = "wrapt", specifier = ">=1.0.0,<3.0.0" },
 ]
-provides-extras = ["instruments", "test"]
+provides-extras = ["instruments"]
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "nats-py", specifier = ">=2.0.0,<3.0.0" },
+    { name = "opentelemetry-sdk", specifier = "~=1.27" },
     { name = "pre-commit", specifier = ">=4.5.1" },
+    { name = "pytest", specifier = ">=7.0" },
+    { name = "pytest-asyncio", specifier = ">=0.21.0" },
     { name = "ruff", specifier = ">=0.15.9" },
 ]
 
