@@ -33,7 +33,7 @@ jobs:
         image: nats:latest
         ports:
           - 4222:4222
-        options: --js
+        options: -js
     strategy:
       matrix:
         python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
