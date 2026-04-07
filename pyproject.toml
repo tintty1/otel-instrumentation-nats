@@ -1,6 +1,6 @@
 [project]
 name = "otel-instrumentation-nats"
-version = "0.1.2"
+version = "0.1.4"
 description = "OpenTelemetry auto-instrumentation for nats-py"
 readme = "README.md"
 requires-python = ">=3.10"
