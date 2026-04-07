@@ -49,3 +49,41 @@ jobs:
       - name: Run tests
         run: uv run pytest -v
 
+  test-otel-versions:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        otel-version: ["0.52b0", "0.56b0", "0.61b0"]
+        include:
+          - otel-version: "0.52b0"
+            otel-api-version: "1.31.0"
+          - otel-version: "0.56b0"
+            otel-api-version: "1.35.0"
+          - otel-version: "0.61b0"
+            otel-api-version: "1.40.0"
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Start NATS server with JetStream
+        run: docker run -d --name nats -p 4222:4222 nats:latest -js
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v8.0.0
+        with:
+          version: "latest"
+
+      - name: Install dependencies
+        run: uv sync --all-extras --all-groups
+
+      - name: Pin OpenTelemetry versions
+        run: >
+          uv pip install
+          opentelemetry-api==${{ matrix.otel-api-version }}
+          opentelemetry-sdk==${{ matrix.otel-api-version }}
+          opentelemetry-instrumentation==${{ matrix.otel-version }}
+          opentelemetry-semantic-conventions==${{ matrix.otel-version }}
+
+      - name: Run tests
+        run: uv run pytest -v
+

@@ -164,7 +164,7 @@ wheels = [
 
 [[package]]
 name = "otel-instrumentation-nats"
-version = "0.1.0"
+version = "0.1.2"
 source = { editable = "." }
 dependencies = [
     { name = "opentelemetry-api" },
@@ -191,9 +191,9 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "nats-py", marker = "extra == 'instruments'", specifier = ">=2.0.0,<3.0.0" },
-    { name = "opentelemetry-api", specifier = "~=1.27" },
-    { name = "opentelemetry-instrumentation", specifier = "==0.61b0" },
-    { name = "opentelemetry-semantic-conventions", specifier = "==0.61b0" },
+    { name = "opentelemetry-api", specifier = ">=1.27,<3" },
+    { name = "opentelemetry-instrumentation", specifier = ">=0.52b0" },
+    { name = "opentelemetry-semantic-conventions", specifier = ">=0.52b0" },
     { name = "wrapt", specifier = ">=1.0.0,<3.0.0" },
 ]
 provides-extras = ["instruments"]
@@ -201,7 +201,7 @@ provides-extras = ["instruments"]
 [package.metadata.requires-dev]
 dev = [
     { name = "nats-py", specifier = ">=2.0.0,<3.0.0" },
-    { name = "opentelemetry-sdk", specifier = "~=1.27" },
+    { name = "opentelemetry-sdk", specifier = ">=1.27" },
     { name = "pre-commit", specifier = ">=4.5.1" },
     { name = "pytest", specifier = ">=7.0" },
     { name = "pytest-asyncio", specifier = ">=0.21.0" },
