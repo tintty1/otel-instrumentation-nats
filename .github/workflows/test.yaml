@@ -55,7 +55,7 @@ jobs:
       matrix:
         otel-version: ["0.52b0", "0.56b0", "0.61b0"]
         include:
-          - otel-version: "0.50b0"
+          - otel-version: "0.52b0"
             otel-api-version: "1.31.0"
           - otel-version: "0.56b0"
             otel-api-version: "1.35.0"
